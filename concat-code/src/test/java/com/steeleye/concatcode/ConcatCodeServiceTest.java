@@ -25,5 +25,14 @@ public class ConcatCodeServiceTest {
 		
 		Assert.assertEquals("IE19800113JOHN#OBRIA",concated);
 	}
+	
+	@Test
+	public void notConvertedTestCaseInsensitive(){
+		JsonObject jsonObject = new JsonObject("John","O'Brian");
+
+		String concated = concatCodeService.concat(gson.toJson(jsonObject));
+		
+		Assert.assertEquals("IE19800113JOHN#OBRIA",concated);
+	}
 
 }
