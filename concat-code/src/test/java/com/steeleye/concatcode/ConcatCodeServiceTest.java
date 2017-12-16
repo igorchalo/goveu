@@ -52,4 +52,24 @@ public class ConcatCodeServiceTest {
 		Assert.assertEquals("IE19800113JOHN#OBRIA",concated);
 	}
 
+	/**
+	 * Take care: van der can match "van" and "van der"
+	 */
+	@Test
+	public void removePrefixTest(){
+		JsonObject jsonObject = new JsonObject("Ludwig","Van der Rohe");
+
+		String concated = concatCodeService.concat(gson.toJson(jsonObject));
+		
+		Assert.assertEquals("IE19800113LUDWIROHE#",concated);
+	}
+	
+	@Test
+	public void notRemovePrefix(){
+		JsonObject jsonObject = new JsonObject("Victor","Vandenberg");
+
+		String concated = concatCodeService.concat(gson.toJson(jsonObject));
+		
+		Assert.assertEquals("IE19800113VICTOVANDE",concated);
+	}
 }

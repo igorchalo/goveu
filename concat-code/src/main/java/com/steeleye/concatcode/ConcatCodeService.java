@@ -11,11 +11,13 @@ public class ConcatCodeService {
 	/**
 	 * Pattern compile is more fast than String.replace.
 	 */
-	private Pattern NAME_TITLE_PATTERN = Pattern.compile("^[atty|coach|dame|dr|fr|gov|honorable|madam(e)|maid|master|miss|monsieur|mr|mrs|ms|mx,ofc|ph.d|pres|prof|rev|sir]\\s",Pattern.CASE_INSENSITIVE);
+	private Pattern NAME_TITLE_PATTERN = Pattern.compile("^(atty|coach|dame|dr|fr|gov|honorable|madam(e)|maid|master|miss|monsieur|mr|mrs|ms|mx,ofc|ph.d|pres|prof|rev|sir)\\s",Pattern.CASE_INSENSITIVE);
 	
-	private Pattern REMOVE_PREFIX_PATTERN = Pattern.compile("^[am|auf|auf dem|aus der|d|da|de|de l’|del|de la|de le|di|do|dos|du|im|la|le|mac|mc|mhac,mhíc|mhic giolla|mic|ni|ní|níc|o|ó|ua|ui|uí|van|van de|van den|van der|vom|von|von dem|von den|von der]\\s",Pattern.CASE_INSENSITIVE);
+	private Pattern REMOVE_PREFIX_PATTERN = Pattern.compile("^(am|auf dem|auf|aus der|d|da|de la|de le|de|de l’|del|di|do|dos|du|im|la|le|mac|mc|mhac,mhíc|mhic giolla|mic|ni|ní|níc|o|ó|ua|ui|uí|van de|van den|van der|van|vom|von|von dem|von den|von der)\\s",Pattern.CASE_INSENSITIVE);
 	
 	private Pattern ENGLISH_ALPHABET_PATTERN = Pattern.compile("[^a-z]",Pattern.CASE_INSENSITIVE);
+	
+	private Pattern NORMALIZER_PATTERN = Pattern.compile("\\p{InCombiningDiacriticalMarks}",Pattern.CASE_INSENSITIVE);
 	
 	/**
 	 * Creating of new matcher is tread safe.
@@ -32,7 +34,7 @@ public class ConcatCodeService {
 		Matcher matcherFirstName = NAME_TITLE_PATTERN.matcher(object.getFirstName());
 		Matcher matcherFirstNamePrefix = REMOVE_PREFIX_PATTERN.matcher(object.getFirstName());
 		
-		Matcher matcherSurname = NAME_TITLE_PATTERN.matcher(object.getSurname());
+		Matcher matcherSurname = REMOVE_PREFIX_PATTERN.matcher(object.getSurname());
 		
 		String firstName = matcherFirstName.replaceAll(replacement);
 		firstName = matcherFirstNamePrefix.replaceAll(replacement);
@@ -57,10 +59,13 @@ public class ConcatCodeService {
 	 */
 	private String article6(String value){
 		String normalizedString = Normalizer.normalize(value, Normalizer.Form.NFD);
-		normalizedString.replaceAll("\\p{InCombiningDiacriticalMarks}", "");
+		normalizedString = NORMALIZER_PATTERN.matcher(value).replaceAll(normalizedString);
 		
 		String result = ENGLISH_ALPHABET_PATTERN.matcher(normalizedString).replaceAll("");
 		return String.format("%1$-5s", result).replace(' ', '#').trim().substring(0, 5).toUpperCase();
 	}
-
+	
+	public static void main(String[] args) {
+		System.out.println("Van der Rohe".replaceAll("^(Van der|van hill)\\s", ""));
+	}
 }
