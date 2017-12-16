@@ -11,9 +11,11 @@ public class ConcatCodeService {
 	/**
 	 * Pattern compile is more fast than String.replace.
 	 */
-	private Pattern NAME_TITLE_PATTERN = Pattern.compile("atty|coach|dame|dr|fr|gov|honorable|madam(e)|maid|master|miss|monsieur|mr|mrs|ms|mx,ofc|ph.d|pres|prof|rev|sir",Pattern.CASE_INSENSITIVE);
+	private Pattern NAME_TITLE_PATTERN = Pattern.compile("^[atty|coach|dame|dr|fr|gov|honorable|madam(e)|maid|master|miss|monsieur|mr|mrs|ms|mx,ofc|ph.d|pres|prof|rev|sir]\\s",Pattern.CASE_INSENSITIVE);
 	
-	private Pattern REMOVE_PREFIX_PATTERN = Pattern.compile("am|auf|auf dem|aus der|d|da|de|de l’|del|de la|de le|di|do|dos|du|im|la|le|mac|mc|mhac,mhíc|mhic giolla|mic|ni|ní|níc|o|ó|ua|ui|uí|van|van de|van den|van der|vom|von|von dem|von den|von der",Pattern.CASE_INSENSITIVE);
+	private Pattern REMOVE_PREFIX_PATTERN = Pattern.compile("^[am|auf|auf dem|aus der|d|da|de|de l’|del|de la|de le|di|do|dos|du|im|la|le|mac|mc|mhac,mhíc|mhic giolla|mic|ni|ní|níc|o|ó|ua|ui|uí|van|van de|van den|van der|vom|von|von dem|von den|von der]\\s",Pattern.CASE_INSENSITIVE);
+	
+	private Pattern ENGLISH_ALPHABET_PATTERN = Pattern.compile("[^a-z]",Pattern.CASE_INSENSITIVE);
 	
 	/**
 	 * Creating of new matcher is tread safe.
@@ -54,10 +56,11 @@ public class ConcatCodeService {
 	 * @return
 	 */
 	private String article6(String value){
-		String normalizedString = Normalizer.normalize(value, Normalizer.Form.NFKD);
+		String normalizedString = Normalizer.normalize(value, Normalizer.Form.NFD);
 		normalizedString.replaceAll("\\p{InCombiningDiacriticalMarks}", "");
 		
-		return String.format("%-5s", normalizedString).replace(' ', '#').trim().toUpperCase();
+		String result = ENGLISH_ALPHABET_PATTERN.matcher(normalizedString).replaceAll("");
+		return String.format("%1$-5s", result).replace(' ', '#').trim().substring(0, 5).toUpperCase();
 	}
 
 }
