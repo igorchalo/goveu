@@ -4,9 +4,11 @@ import com.google.gson.Gson;
 
 public class ConcatCodeService {
 	
-	private NameTitlesService nameTitlesService;
+	private NameTitlesService nameTitlesService = new NameTitlesService();
 	
-	private RemovingPrefixesService removingPrefixesService;
+	private RemovingPrefixesService removingPrefixesService = new RemovingPrefixesService();
+	
+	private ConcatNormalizerService normalizer = new ConcatNormalizerService();
 
 	private Gson gson = new Gson();
 	
@@ -15,9 +17,16 @@ public class ConcatCodeService {
 		
 		String firstName = nameTitlesService.execute(object.getFirstName());
 		firstName = removingPrefixesService.execute(firstName);
+		firstName = normalizer.execute(firstName);
 		
-		String surName = removingPrefixesService.execute(object.getSurname());
+		String surname = removingPrefixesService.execute(object.getSurname());
+		surname = normalizer.execute(surname);
 		
+		return firstName.concat(surname);
+	}
+	
+	private String article6(String value){
+		//return value.a
 		return null;
 	}
 

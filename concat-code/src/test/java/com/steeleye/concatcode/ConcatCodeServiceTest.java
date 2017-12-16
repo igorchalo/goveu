@@ -18,6 +18,23 @@ public class ConcatCodeServiceTest {
 	}
 	
 	@Test
+	public void nullTest(){
+		JsonObject jsonObject = new JsonObject(null,null);
+
+		String concated = concatCodeService.concat(gson.toJson(jsonObject));
+		Assert.assertEquals("Error: ",concated);
+	}
+
+	@Test
+	public void emptyTest(){
+		JsonObject jsonObject = new JsonObject("","");
+
+		String concated = concatCodeService.concat(gson.toJson(jsonObject));
+		
+		Assert.assertEquals("Error: ",concated);
+	}
+	
+	@Test
 	public void notConvertedTest(){
 		JsonObject jsonObject = new JsonObject("John","O'Brian");
 
