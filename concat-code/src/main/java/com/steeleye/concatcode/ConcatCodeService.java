@@ -1,5 +1,7 @@
 package com.steeleye.concatcode;
 
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.text.Normalizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -15,7 +17,8 @@ public class ConcatCodeService {
 	
 	private Pattern REMOVE_PREFIX_PATTERN = Pattern.compile("^(am|auf dem|auf|aus der|d|da|de la|de le|de|de l’|del|di|do|dos|du|im|la|le|mac|mc|mhac,mhíc|mhic giolla|mic|ni|ní|níc|o|ó|ua|ui|uí|van de|van den|van der|van|vom|von|von dem|von den|von der)\\s",Pattern.CASE_INSENSITIVE);
 	
-	private Pattern ENGLISH_ALPHABET_PATTERN = Pattern.compile("[^a-z]",Pattern.CASE_INSENSITIVE);
+	//"\\p{IsLatin}+"
+	private Pattern BASIC_LATIN_ALPHABET_PATTERN = Pattern.compile("[^a-z]",Pattern.CASE_INSENSITIVE);
 	
 	private Pattern NORMALIZER_PATTERN = Pattern.compile("\\p{InCombiningDiacriticalMarks}",Pattern.CASE_INSENSITIVE);
 	
@@ -59,13 +62,20 @@ public class ConcatCodeService {
 	 */
 	private String article6(String value){
 		String normalizedString = Normalizer.normalize(value, Normalizer.Form.NFD);
-		normalizedString = NORMALIZER_PATTERN.matcher(value).replaceAll(normalizedString);
+		normalizedString = NORMALIZER_PATTERN.matcher(value).replaceAll("");
 		
-		String result = ENGLISH_ALPHABET_PATTERN.matcher(normalizedString).replaceAll("");
+		String result = BASIC_LATIN_ALPHABET_PATTERN.matcher(normalizedString).replaceAll("");
 		return String.format("%1$-5s", result).replace(' ', '#').trim().substring(0, 5).toUpperCase();
 	}
 	
-	public static void main(String[] args) {
-		System.out.println("Van der Rohe".replaceAll("^(Van der|van hill)\\s", ""));
+	public static void main(String[] args) throws IOException {
+		
+		OutputStreamWriter out = new OutputStreamWriter(System.out, "UTF-7");
+		out.write("Ø");
+		
+		
+		
 	}
+	
+	
 }

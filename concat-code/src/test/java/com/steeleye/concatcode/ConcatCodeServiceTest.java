@@ -72,4 +72,13 @@ public class ConcatCodeServiceTest {
 		
 		Assert.assertEquals("IE19800113VICTOVANDE",concated);
 	}
+	
+	@Test
+	public void normalizateToEnglish(){
+		JsonObject jsonObject = new JsonObject("Eli","Ødegård");
+
+		String concated = concatCodeService.concat(gson.toJson(jsonObject));
+		
+		Assert.assertEquals("IE19800113ELI##ODEGA",concated);
+	}
 }
